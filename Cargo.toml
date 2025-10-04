@@ -1,0 +1,35 @@
+[package]
+name = "HLAnalysis"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "HLAnalysis"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.15.0", features = ["extension-module"] }
+rayon = "1.5"
+lazy_static = "1.4"
+ndarray = "0.16.1"
+ndarray-linalg= "0.16.0-rc.0"
+numpy = "0.15.1"
+nalgebra = "0.29.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_derive = "1.0"    # Derive macros for Serde
+bincode = "1.3"
+winapi = { version = "0.3", features = ["winnt"] }
+# crossbeam-channel: bounded 채널을 위한 크레이트
+crossbeam-channel = "0.5"
+num_cpus = "1.13"
+
+# windows: Win32 API FILE_SHARE_READ/WRITE 사용
+windows = { version = "0.48.0", features = [
+    "Win32_Storage_FileSystem"
+] }
+
+indicatif = "0.17"
+
+

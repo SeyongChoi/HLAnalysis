@@ -2,27 +2,79 @@
 
 **HLAnalysis**는 Solid/Water interface 시스템에서 solid-water interface에서 형성되는 **Hydration Layer(수화층)**의 LAMMPS trajectory로부터 원자 구조를 읽고 이를 통해 구조·동역학·스펙트럼 분석을 구현한 프로젝트입니다. 이 프로젝트는 Rust 및 python 언어를 기반으로 하며, density profile, molecular orientation, time orientational correlation function, SFG spectrum을 포함하여 다양한 실험 구성이 가능하도록 설계되어 있습니다.
 
-<!-- 
+
 ## 📁 프로젝트 구조
 
 ```
 HLAnalysis/
-├── config/               # YAML 설정 파일 (모델, 데이터셋, 학습 등)
-├── data/                 # 데이터셋 저장 디렉토리
-├── cnnca/                # cnnCA source code
-|   ├── unitcell.py           # UnitCell object
-|   ├── dataset.py            # Dataset obejct 및 전처리 모듈
-|   ├── reader.py             # 데이터 로드 및 DataLoader
-|   ├── utils.py              # 시각화 및 기타 유틸 함수         (작성중)
-|   └── nn/                   # Neural Network 모델 정의
-|       ├── ANN.py                   # ANN 모델 정의
-|       ├── CNN.py                   # CNN 모델 정의
-|       └── SteerableCNN.py          # Steerable CNN 모델 정의 (작성중)
-├── main.py               # 실행 스크립트
-├── requirements.txt      # 필요한 패키지 목록
-└── README.md             # 프로젝트 안내 문서
-```
+├── pyproject.toml              # maturin 기반 Python 빌드 설정 (PEP 621)
+├── Cargo.toml                  # Rust 크레이트 설정
+├── src/                        # Rust 소스코드 (핵심 로직)
+│   ├── lib.rs                  # PyO3 엔트리 포인트
+│   ├── atoms/                  # 원자 데이터 구조
+│   │   ├── mod.rs
+│   │   ├── atom.rs
+│   │   └── atoms.rs
+│   ├── io/                     # 입력/출력 (I/O)
+│   │   ├── mod.rs
+│   │   ├── read/
+│   │   │   ├── mod.rs
+│   │   │   ├── read.rs
+│   │   │   ├── read_xyz.rs
+│   │   │   └── read_lammps_dump.rs
+│   │   └── write/
+│   │       ├── mod.rs
+│   │       ├── write.rs
+│   │       ├── write_hbond_info.rs
+│   │       └── write_den_profiles.rs
+│   ├── analysis/               # 분석 루틴 (핵심 계산 모듈)
+│   │   ├── mod.rs
+│   │   ├── density_profile/
+│   │   │   ├── mod.rs
+│   │   │   ├── density_profile.rs
+│   │   │   └── README.md
+│   │   ├── orient_dist/
+│   │   │   ├── mod.rs
+│   │   │   ├── bond_orient_along_normal.rs
+│   │   │   ├── molecular_orient_dist.rs
+│   │   │   └── README.md
+│   │   ├── orient_dynamics/
+│   │   │   ├── mod.rs
+│   │   │   ├── orient_time_corr_function.rs
+│   │   │   └── README.md
+│   │   └── sfg/
+│   │       ├── mod.rs
+│   │       ├── dipole_polar_term.rs
+│   │       ├── vvacf.rs
+│   │       ├── tr_vvacf.rs
+│   │       ├── spectrum.rs
+│   │       └── README.md
+│   └── utils/                  # 보조 유틸리티 모듈
+│       ├── mod.rs
+│       ├── parameters.rs
+│       ├── atomic_data.rs
+│       ├── mic.rs
+│       ├── converter.rs
+│       └── pycell3.rs
+├── python/                     # Python wrapper 및 후처리 모듈
+│   └── hlanalysis/
+│       ├── __init__.py         # Rust 모듈 래핑 및 네임스페이스 초기화
+│       ├── _version.py         # 버전 정보
+│       ├── io.py               # Rust 함수 래퍼 또는 파일 입출력 후처리
+│       ├── analysis/           # 후처리 및 시각화 (Rust 결과를 Python에서 가공)
+│       │   ├── __init__.py
+│       │   ├── plot_density.py
+│       │   ├── plot_orient.py
+│       │   └── plot_sfg.py
+│       └── utils/
+│           ├── __init__.py
+│           ├── filepaths.py
+│           └── timer.py
+├── requirements.txt             # Python 의존성 목록
+└── README.md                    # 프로젝트 설명 문서
 
+```
+<!-- 
 ## 🧠 주요 기능
 
 - LAMMPS trajectory로 부터 atomic information 읽기

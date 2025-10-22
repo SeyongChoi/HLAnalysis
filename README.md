@@ -36,11 +36,21 @@ Before installation, please install **Rust** from the official website:
 ## Usage
 ### 1. Installation (dev)
 ```bash
+# Create & activate environment (Python ≥ 3.8)
+conda create -n py38-hla python==3.8.*
+conda activate py38-hla
+
+# Install maturin
 pip install maturin 
+# Clone repo
 git clone https://github.com/SeyongChoi/HLAnalysis.git
 cd HLAnalysis
 
+# Build & install
 maturin develop -r
+
+# (Optional) python dependencies
+pip install -r requirement.txt
 ```
 
 ### 2. Verify Installation

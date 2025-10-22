@@ -1,11 +1,11 @@
 [package]
-name = "HLAnalysis"
+name = "hlanalysis-core"        # Rust Crate name (can differ from Python name)
 version = "0.1.0"
 edition = "2021"
+description = "Rust core for HLAnalysis Python package, exposed to python via PyO3"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "HLAnalysis"
+name = "_hlanalysis"
 crate-type = ["cdylib"]
 
 [dependencies]

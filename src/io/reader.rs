@@ -1,6 +1,7 @@
 use pyo3::prelude::*;
 use std::fs::File;
 use std::io::BufReader;
+use bincode::deserialize_from;
 
 use crate::atoms::Atoms;
 use crate::io::read::read_lammps_dump::read_lammps_dump;

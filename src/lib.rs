@@ -8,7 +8,7 @@ const PKG: &str = "hlanalysis"; // sys.modules 등록에 사용할 패키지 접
 
 /*------------------------------------------------------------------------------------ */
 #[pymodule]
-fn _hlanalysis(_py: Python, root: &PyModule) -> PyResult<()> {
+fn _hlanalysis(py: Python, root: &PyModule) -> PyResult<()> {
     /* ------------------------------------------------------------------------ */
     // top-level class
     root.add_class::<atom::Atom>()?;

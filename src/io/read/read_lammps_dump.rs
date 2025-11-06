@@ -1,5 +1,4 @@
 use pyo3::prelude::*;
-use pyo3::exceptions::PyIOError;
 
 use std::fs::{create_dir_all, File};
 use std::io::{BufRead, BufReader, Write};

@@ -1,5 +1,4 @@
-from . import io
-from .atoms import Atoms
+from . import io, Atoms
 from typing import Optional
 
 def reader(

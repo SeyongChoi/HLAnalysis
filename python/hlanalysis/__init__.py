@@ -9,10 +9,11 @@ High-level Python entrypoints and lazy access to Rust-registered submodules:
 from . import _hlanalysis as _ext 
 from ._version import __version__
 
-from .io_wrapper import reader, read_atoms_from_bin
-
 Atom = _ext.Atom
 Atoms = _ext.Atoms
+
+from .io_wrapper import reader, read_atoms_from_bin
+
 
 __all__ = [
     'Atom', 'Atoms',

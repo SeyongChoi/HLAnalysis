@@ -1,4 +1,6 @@
 /target/
+__pycache__
+tmp_atoms
 *.pyd
 *.pyc
 Cargo.lock

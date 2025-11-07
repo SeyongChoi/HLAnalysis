@@ -12,11 +12,16 @@ from ._version import __version__
 Atom = _ext.Atom
 Atoms = _ext.Atoms
 
+io = _ext.io
+utils = _ext.utils
+analysis = _ext.analysis
+
 from .io_wrapper import reader, read_atoms_from_bin
 
 
 __all__ = [
     'Atom', 'Atoms',
+    'io', 'utils', 'analysis',
     'reader', 'read_atoms_from_bin',
     '__version__'
     ]

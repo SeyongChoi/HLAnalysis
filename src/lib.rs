@@ -1,6 +1,8 @@
 mod atom;
 mod atoms;
 mod io;
+mod utils;
+mod analysis;
 
 use pyo3::prelude::*;
 
@@ -16,6 +18,8 @@ fn _hlanalysis(py: Python, root: &PyModule) -> PyResult<()> {
 
     // sub modulue attach
     attach(py, root, "io", io::register)?;
+    attach(py, root, "utils", utils::register)?;
+    attach(py, root, "analysis", analysis::register)?;
     Ok(())
 }
 

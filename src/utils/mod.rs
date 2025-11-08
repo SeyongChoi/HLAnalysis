@@ -1,5 +1,6 @@
 pub mod histogram;
 pub mod physchem;
+pub mod spatial;
 
 use pyo3::prelude::*;
 

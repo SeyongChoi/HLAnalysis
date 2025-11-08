@@ -1,5 +1,7 @@
 pub mod density_profile;
 pub mod orient_dist;
+pub mod types;
+pub mod spectroscopy;
 
 use pyo3::prelude::*;
 

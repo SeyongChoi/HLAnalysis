@@ -21,7 +21,7 @@ It is designed for **hydration layer–resolved analysis** of atomistic simulati
 - [x] Atom / Atoms Rust module  
 - [x] I/O Rust module  
 - [x] Density Profile Rust module  
-- [ ] Orientation Distribution Rust module  
+- [x] Orientation Distribution Rust module  
 - [ ] Reorientation Dynamics Rust module  
 - [ ] Hbond Analysis Rust module  
 - [ ] Spectroscopy Rust module  

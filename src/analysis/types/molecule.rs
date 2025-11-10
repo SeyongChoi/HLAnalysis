@@ -1,8 +1,6 @@
 use pyo3::prelude::*;
 use serde::{Serialize, Deserialize};
 
-use super::enums::{MolKind, HBondKind};
-
 #[pyclass]
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct HydrogenBondPartner {
@@ -11,7 +9,7 @@ pub struct HydrogenBondPartner {
     #[pyo3(get, set)]
     pub partner_moltype: Option<String>, // Molecule type of the partner
     #[pyo3(get, set)]
-    pub h_bond_type: HBondKind,          // "donor" or "acceptor"
+    pub h_bond_type: Option<String>,             // "donor" 또는 "acceptor"
 }
 
 #[pyclass]
@@ -62,8 +60,6 @@ pub struct MoleculeRecord {
     // --- Classification / labels ---
     #[pyo3(get, set)]
     pub mol_type: Option<String>,  // e.g. "W-1a-L-S1"
-    #[pyo3(get, set)]
-    pub mol_kind: Option<MolKind>, // Enum: W, S, etc.
 
     // --- Hydrogen bond partners (only for HB analysis) ---
     #[pyo3(get, set)]
@@ -114,9 +110,8 @@ impl MoleculeRecord {
         self.rz_hoh = hoh; 
         self
     }
-    pub fn with_labels(mut self, mol_type: Option<String>, mol_kind: Option<MolKind>) -> Self {
+    pub fn with_labels(mut self, mol_type: Option<String>) -> Self {
         self.mol_type = mol_type; 
-        self.mol_kind = mol_kind; 
         self
     }
     pub fn with_hbonds(mut self, partners: Option<Vec<HydrogenBondPartner>>) -> Self {

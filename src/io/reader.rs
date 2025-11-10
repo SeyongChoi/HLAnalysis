@@ -6,6 +6,8 @@ use bincode::deserialize_from;
 use crate::atoms::Atoms;
 use crate::io::read::read_lammps_dump::read_lammps_dump;
 
+use crate::analysis::types::dipole_polar::DipolePolarRecord as DipolePolarResult;
+
 /// Main entry point for reading atomic structure files.
 /// Selects the correct reader depending on the specified format.
 #[pyfunction]
@@ -48,4 +50,20 @@ pub fn read_atoms_from_bin(bin_file: &str) -> PyResult<Atoms> {
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Error deserializing: {}", e)))?;
     
     Ok(atoms)
+}
+
+#[pyfunction]
+pub fn read_dipole_from_bin(bin_file: &str) -> PyResult<Vec<DipolePolarResult>> {
+    let file = File::open(bin_file)
+        .map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Error opening file: {}", e)))?;
+    
+    let buf_size = 1024 * 1024; // 1MB buffer size
+    // let reader = BufReader::new(file);
+    let reader = BufReader::with_capacity(buf_size,file);
+    
+    let dipole_polar_terms: Vec<DipolePolarResult> = deserialize_from(reader)
+        .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Error deserializing: {}", e)))?;
+    
+    // Ok(DipolePolarResultList::new(dipole_polar_terms))
+    Ok(dipole_polar_terms)
 }

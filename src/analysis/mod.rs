@@ -8,6 +8,7 @@ use pyo3::prelude::*;
 /// Register `hlanalysis.analysis` and attach its submodules:
 /// - hlanalysis.analysis.density_profile
 /// - hlanalysis.analysis.orient_dist
+/// - hlanalysis.analysis.spectroscopy
 pub fn register(py: Python<'_>, m: &PyModule) -> PyResult<()> {
     /* -------------------------------------------------------
        1. Create & attach `density_profile` submodule
@@ -31,6 +32,17 @@ pub fn register(py: Python<'_>, m: &PyModule) -> PyResult<()> {
     py.import("sys")?
         .getattr("modules")?
         .set_item("hlanalysis.analysis.orient_dist", &orient_dist_mod)?;
+
+    /* -------------------------------------------------------
+       3. Create & attach `spectroscopy` submodule
+       ------------------------------------------------------- */
+    let spectroscopy_mod = PyModule::new(py, "spectroscopy")?;
+    spectroscopy::spectroscopy(py, &spectroscopy_mod)?; // call its #[pymodule] fn
+    m.add_submodule(&spectroscopy_mod)?;
+
+    py.import("sys")?
+        .getattr("modules")?
+        .set_item("hlanalysis.analysis.spectroscopy", &spectroscopy_mod)?;
 
     Ok(())
 }

@@ -1,7 +1,6 @@
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
-use std::sync::Mutex;
 use std::io::BufReader; 
 use std::path::PathBuf;
 use std::fs::{self, File};

@@ -15,7 +15,7 @@ use crate::utils::spatial::inverse_cell::inverse_cell;
 use crate::analysis::types::oh::OHRecord as OHResult;
 use crate::analysis::types::dipole_polar::DipolePolarRecord as DipolePolarResult;
 
-use crate::analysis::spectroscopy::pre_process::{read_frame, ReadFrameResult};
+use crate::analysis::pre_process::{read_frame, ReadFrameResult};
 use crate::analysis::spectroscopy::tools::{dp, norm};
 
 

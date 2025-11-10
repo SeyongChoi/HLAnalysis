@@ -3,6 +3,7 @@ pub mod orient_dist;
 pub mod types;
 pub mod spectroscopy;
 pub mod pre_process;
+pub mod hbond;
 
 use pyo3::prelude::*;
 

@@ -236,31 +236,22 @@ pub enum ReadFrameResult {
 }
 
 
-// #[pyfunction]
-pub fn read_frame(
-    mode: String,
-    frame_idx: usize,
-    index_silanol: Vec<i32>,
-    index_water: Vec<i32>,
-    surface_normal: Vec<f64>,
-    center: Option<f64>, // z_center coordinate
-    z_threshold_water: Option<Vec<[f64; 2]>>,
-    z_threshold_silanol: Option<f64>,
-    dir: &str, // Optional directory path
-) -> PyResult<ReadFrameResult> {    
-    
-    // -----------------------
-    // 1) Load atoms & cell
-    // -----------------------
-    let directory = dir.to_string();
-    let file_path = format!("{}/timestep_{}.bin", directory, frame_idx);
-    let atoms = read_atoms_from_bin(&file_path)
-        .or_else(|_| Err(PyErr::new::<PyValueError, _>("Failed to read atoms")))?;
+#[inline]
+pub fn extract_molecules_from_atoms(
+    atoms: &Atoms,
+    index_silanol: &Vec<i32>,
+    index_water: &Vec<i32>,
+    surface_normal: &Vec<f64>,
+    center: Option<f64>,
+    z_threshold_water: &Option<Vec<[f64; 2]>>,
+    z_threshold_silanol: &Option<f64>,
+) -> PyResult<Vec<MoleculeResult>> {    
+
     let cell = *atoms.cell.as_ref().unwrap();
     let cell_inv = inverse_cell(&cell);
 
     // -----------------------
-    // 2) Precompute indices
+    // Precompute indices
     // -----------------------
     let (oxygen_indices, silanol_oxygen_indices, silanol_hydrogen_indices, water_oxygen_indices) = 
         precompute_indices(&atoms, &index_silanol, &index_water);
@@ -271,7 +262,7 @@ pub fn read_frame(
         .collect();
 
     // -----------------------
-    // 3) Per-oxygen processing (parallel)
+    // Per-oxygen processing (parallel)
     // -----------------------
     let results: Vec<MoleculeResult> = oxygen_indices.par_iter()
         .filter_map(|&o_idx| {
@@ -310,6 +301,50 @@ pub fn read_frame(
             None
         })
         .collect();
+
+    Ok(results)
+}
+
+
+// #[pyfunction]
+pub fn read_frame(
+    mode: String,
+    frame_idx: usize,
+    index_silanol: Vec<i32>,
+    index_water: Vec<i32>,
+    surface_normal: Vec<f64>,
+    center: Option<f64>, // z_center coordinate
+    z_threshold_water: Option<Vec<[f64; 2]>>,
+    z_threshold_silanol: Option<f64>,
+    dir: &str, // Optional directory path
+) -> PyResult<ReadFrameResult> {    
+    
+    // -----------------------
+    // 1) Load atoms & cell
+    // -----------------------
+    let directory = dir.to_string();
+    let file_path = format!("{}/timestep_{}.bin", directory, frame_idx);
+    let atoms = read_atoms_from_bin(&file_path)
+        .or_else(|_| Err(PyErr::new::<PyValueError, _>("Failed to read atoms")))?;
+    let cell = *atoms.cell.as_ref().unwrap();
+    let cell_inv = inverse_cell(&cell);
+
+    // -----------------------
+    // 2~3) Precompute indices & Per-oxygen processing
+    // -----------------------
+    let results: Vec<MoleculeResult> = Python::with_gil(|py| {
+        py.allow_threads(|| {
+            extract_molecules_from_atoms(
+                &atoms,
+                &index_silanol,
+                &index_water,
+                &surface_normal,
+                center.clone(),
+                &z_threshold_water,
+                &z_threshold_silanol,
+            )
+        })
+    })?;
     // -----------------------
     // 4) Mode-specific aggregation
     // -----------------------

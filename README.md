@@ -18,13 +18,9 @@ It is designed for **hydration layer–resolved analysis** of atomistic simulati
 ---
 ## Development Status
 **Status:** *In progress*  
-- [x] Atom / Atoms Rust module  
-- [x] I/O Rust module  
-- [x] Density Profile Rust module  
-- [x] Orientation Distribution Rust module  
-- [x] Reorientation Dynamics Rust module  
-- [x] Hbond Analysis Rust module  
-- [x] Spectroscopy Rust module  
+- [ ] Reorientation Dynamics Python example 
+- [ ] Hbond Analysis Python example
+- [ ] Spectroscopy Python example
 
 ---
 ## Requirements

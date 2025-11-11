@@ -228,8 +228,8 @@ pub enum ReadFrameResult {
         oh_infos: Vec<OHResult>,
         mol_infos: Vec<MoleculeResult>,
     },
-    CrossCorr {
-        results: Vec<Option<MoleculeResult>>,
+    TimeCorr {
+        results: Vec<MoleculeResult>,
         e_vecs: Vec<[f64; 3]>,
         mol_types: Vec<String>,
     },
@@ -433,10 +433,37 @@ pub fn read_frame(
                 mol_infos: results,
             })
         }
-        "crosscorr" =>{
-            Err(PyErr::new::<pyo3::exceptions::PyNotImplementedError, _>(
-                    "CrossCorr mode is not implemented yet",
-                ))        
+        "timecorr" =>{
+            let mut mol_types: Vec<String> = Vec::new();
+            let mut e_vecs: Vec<[f64; 3]> = Vec::new();
+
+            for r in &results{
+                // Skip molecules with no mol_type
+                let Some(mt) = r.mol_type.as_ref() else { continue };
+
+                if mt.contains('W') {
+                    // Each water molecule has two OH bonds → push both
+                    e_vecs.push(r.e_oh1.expect("water e_oh1 must be Some"));
+                    mol_types.push(mt.clone());
+
+                    // Some cases may have valid H2; check before pushing
+                    if r.h2_idx.is_some() {
+                        e_vecs.push(r.e_oh2.expect("water e_oh2 must be Some"));
+                        mol_types.push(mt.clone());
+                    }
+                } else if mt.contains('S') {
+                    // Silanol molecules have only one OH bond
+                    e_vecs.push(r.e_oh1.expect("silanol e_oh1 must be Some"));
+                    mol_types.push(mt.clone());
+                }
+            }
+
+            Ok(ReadFrameResult::TimeCorr {
+                results,
+                e_vecs,
+                mol_types,
+            })
+
             }
         other => Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(
             format!("unknown mode: {other}")

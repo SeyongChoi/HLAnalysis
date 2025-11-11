@@ -4,6 +4,7 @@ pub mod types;
 pub mod spectroscopy;
 pub mod pre_process;
 pub mod hbond;
+pub mod reorient_dynamics;
 
 use pyo3::prelude::*;
 
@@ -11,6 +12,7 @@ use pyo3::prelude::*;
 /// - hlanalysis.analysis.density_profile
 /// - hlanalysis.analysis.orient_dist
 /// - hlanalysis.analysis.spectroscopy
+/// - hlanalysis.analysis.reorient_dynamics
 pub fn register(py: Python<'_>, m: &PyModule) -> PyResult<()> {
     /* -------------------------------------------------------
        1. Create & attach `density_profile` submodule
@@ -45,6 +47,16 @@ pub fn register(py: Python<'_>, m: &PyModule) -> PyResult<()> {
     py.import("sys")?
         .getattr("modules")?
         .set_item("hlanalysis.analysis.spectroscopy", &spectroscopy_mod)?;
+    /* -------------------------------------------------------
+       4. Create & attach `reorient_dynamics` submodule
+       ------------------------------------------------------- */
+    let reorient_dynamics_mod = PyModule::new(py, "reorient_dynamics")?;
+    reorient_dynamics::reorient_dynamics(py, &reorient_dynamics_mod)?; // call its #[pymodule] fn
+    m.add_submodule(&reorient_dynamics_mod)?;
+
+    py.import("sys")?
+        .getattr("modules")?
+        .set_item("hlanalysis.analysis.reorient_dynamics", &reorient_dynamics_mod)?;
 
     Ok(())
 }

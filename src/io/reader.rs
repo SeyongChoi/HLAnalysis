@@ -6,6 +6,7 @@ use bincode::deserialize_from;
 use crate::atoms::Atoms;
 use crate::io::read::read_lammps_dump::read_lammps_dump;
 
+use crate::analysis::types::time_corr::TimeCorrRecord as TimeCorrResult;
 use crate::analysis::types::dipole_polar::DipolePolarRecord as DipolePolarResult;
 
 /// Main entry point for reading atomic structure files.

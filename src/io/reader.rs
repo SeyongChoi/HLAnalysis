@@ -5,6 +5,8 @@ use bincode::deserialize_from;
 
 use crate::atoms::Atoms;
 use crate::io::read::read_lammps_dump::read_lammps_dump;
+use crate::io::read::read_xyz::read_xyz;
+use crate::io::read::read_cp2k_xyz::read_cp2k_xyz;
 
 use crate::analysis::types::time_corr::TimeCorrRecord as TimeCorrResult;
 use crate::analysis::types::dipole_polar::DipolePolarRecord as DipolePolarResult;
@@ -15,19 +17,26 @@ use crate::analysis::types::dipole_polar::DipolePolarRecord as DipolePolarResult
 pub fn reader(
     file_path: &str, 
     format: String, 
-    start:Option<usize>, 
+    start:Option<usize>,  
     end:Option<usize>, 
     interval:Option<usize>, 
-    output_dir:Option<&str>
+    output_dir:Option<&str>,
+    velocity: bool,
+    vel_file_path: Option<&str>,
+    cell: Option<[[f64;3];3]>,
 ) -> PyResult<()> {
     match format.as_str() {
         // LAMMPS-dump format
         "lammps-dump" => read_lammps_dump(file_path, start, end, interval, output_dir),
 
+        // "xyz"
+        "xyz" => read_xyz(file_path, start, end, interval, output_dir),
+
+        // "cp2k-xyz"
+        "cp2k-xyz" => read_cp2k_xyz(file_path, start, end, interval, output_dir,velocity, vel_file_path, cell),
+
         // Placeholder for other formats (future support)
-        // "xyz" => ...
         // "extxyz" => ...
-        // "cp2k-xyz" => ...
         // "pdb" => ...
 
         // Unsupported format
